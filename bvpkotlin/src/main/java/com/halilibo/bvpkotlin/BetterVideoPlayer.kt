@@ -102,6 +102,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
     private var mGestureType = GestureType.NoGesture
     private var mAutoPlay = false
     private var mControlsDisabled = false
+    private var mControlsShown = true
     private var mInitialPosition = -1
     private var mDoubleTapSeekDuration: Int = 0
 
@@ -504,6 +505,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
         if (mControlsDisabled || isControlsShown())
             return
 
+        mControlsShown = true
         mControlsFrame.animate().cancel()
         mControlsFrame.alpha = 0f
         mControlsFrame.visibility = View.VISIBLE
@@ -539,6 +541,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
         if (mControlsDisabled || !isControlsShown())
             return
 
+        mControlsShown = false
         mControlsFrame.let { controlsFrame ->
             controlsFrame.animate().cancel()
             controlsFrame.alpha = 1f
@@ -594,7 +597,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
 
     @CheckResult
     override fun isControlsShown(): Boolean {
-        return !mControlsDisabled && mControlsFrame.alpha > .5f
+        return !mControlsDisabled && mControlsShown
     }
 
     override fun toggleControls() {
