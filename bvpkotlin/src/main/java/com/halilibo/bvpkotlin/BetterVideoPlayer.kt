@@ -471,7 +471,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
 
         mSource?.let { source ->
             try {
-                hideControls()
+                setControlsEnabled(false)
                 mCallback?.onPreparing(this)
                 mPlayer?.setSurface(mSurface)
                 if (source.scheme == "http" || source.scheme == "https") {
@@ -500,12 +500,11 @@ class BetterVideoPlayer @JvmOverloads constructor(
     }
 
     override fun showControls() {
-        mCallback?.onToggleControls(this, true)
-
         if (mControlsDisabled || isControlsShown())
             return
 
         mControlsShown = true
+        mCallback?.onToggleControls(this, true)
         mControlsFrame.animate().cancel()
         mControlsFrame.alpha = 0f
         mControlsFrame.visibility = View.VISIBLE
@@ -536,12 +535,11 @@ class BetterVideoPlayer @JvmOverloads constructor(
     }
 
     override fun hideControls() {
-        mCallback?.onToggleControls(this, false)
-
         if (mControlsDisabled || !isControlsShown())
             return
 
         mControlsShown = false
+        mCallback?.onToggleControls(this, false)
         mControlsFrame.let { controlsFrame ->
             controlsFrame.animate().cancel()
             controlsFrame.alpha = 1f
@@ -774,7 +772,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
     override fun onPrepared(mediaPlayer: MediaPlayer) {
         log("onPrepared()")
         mProgressBar.visibility = View.INVISIBLE
-        showControls()
+        setControlsEnabled(true)
         mIsPrepared = true
 
         if (mCallback != null) {
@@ -962,11 +960,12 @@ class BetterVideoPlayer @JvmOverloads constructor(
 
         if (mControlsDisabled) {
             disableControls()
+            hideControls()
         } else {
             enableControls()
+            showControls()
         }
         setBottomProgressBarVisibility(mBottomProgressBarVisibility)
-        setControlsEnabled(false)
         prepare()
     }
 
