@@ -520,9 +520,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
                 .start()
 
         if (mBottomProgressBarVisibility) {
-            mBottomProgressBar.animate().cancel()
-            mBottomProgressBar.alpha = 1f
-            mBottomProgressBar.animate().alpha(0f).start()
+            hideBottomProgress()
         }
 
         if (mShowToolbar) {
@@ -568,14 +566,24 @@ class BetterVideoPlayer @JvmOverloads constructor(
                 }).start()
 
         if (mBottomProgressBarVisibility) {
-            mBottomProgressBar.let {
-                it.animate().cancel()
-                it.alpha = 0f
-                it.animate().alpha(1f).start()
-            }
+            showBottomProgress()
         }
 
         hideToolbarWithAnimation()
+    }
+
+    private fun showBottomProgress() {
+        mBottomProgressBar.let {
+            it.animate().cancel()
+            it.alpha = 0f
+            it.animate().alpha(1f).start()
+        }
+    }
+
+    private fun hideBottomProgress() {
+        mBottomProgressBar.animate().cancel()
+        mBottomProgressBar.alpha = 1f
+        mBottomProgressBar.animate().alpha(0f).start()
     }
 
     private fun hideToolbarWithAnimation() {
@@ -618,6 +626,11 @@ class BetterVideoPlayer @JvmOverloads constructor(
             mBottomProgressBar.visibility = View.VISIBLE
         } else {
             mBottomProgressBar.visibility = View.GONE
+        }
+        if (isControlsShown()) {
+            hideBottomProgress()
+        } else {
+            showBottomProgress()
         }
     }
 
