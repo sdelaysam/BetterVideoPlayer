@@ -50,8 +50,8 @@ class BetterVideoPlayer @JvmOverloads constructor(
     private var mPlayer: MediaPlayer? = null
     private var am: AudioManager? = null
     private var mSurface: Surface? = null
-    private var mSubViewTextSize: Int = 0
-    private var mSubViewTextColor: Int = 0
+//    private var mSubViewTextSize: Int = 0
+//    private var mSubViewTextColor: Int = 0
 
     /**
      * Window that holds the player. Necessary for setting brightness.
@@ -64,7 +64,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
     private lateinit var mToolbarFrame: View
 
     private lateinit var mToolbar: Toolbar
-    private lateinit var mSubView: CaptionsView
+//    private lateinit var mSubView: CaptionsView
     private lateinit var mProgressBar: ProgressBar
     private lateinit var mPositionTextView: TextView
     private lateinit var viewForward: TextView
@@ -342,12 +342,12 @@ class BetterVideoPlayer @JvmOverloads constructor(
                         R.styleable.BetterVideoPlayer_bvp_showToolbar, true)
                 mControlsDisabled = a.getBoolean(
                         R.styleable.BetterVideoPlayer_bvp_disableControls, false)
-                mSubViewTextSize = a.getDimensionPixelSize(
-                        R.styleable.BetterVideoPlayer_bvp_captionSize,
-                        resources.getDimensionPixelSize(R.dimen.bvp_subtitle_size))
-                mSubViewTextColor = a.getColor(
-                        R.styleable.BetterVideoPlayer_bvp_captionColor,
-                        ContextCompat.getColor(context, R.color.bvp_subtitle_color))
+//                mSubViewTextSize = a.getDimensionPixelSize(
+//                        R.styleable.BetterVideoPlayer_bvp_captionSize,
+//                        resources.getDimensionPixelSize(R.dimen.bvp_subtitle_size))
+//                mSubViewTextColor = a.getColor(
+//                        R.styleable.BetterVideoPlayer_bvp_captionColor,
+//                        ContextCompat.getColor(context, R.color.bvp_subtitle_color))
 
             } catch (e: Exception) {
                 log("Exception " + e.message)
@@ -356,8 +356,8 @@ class BetterVideoPlayer @JvmOverloads constructor(
                 a.recycle()
             }
         } ?: run {
-            mSubViewTextSize = resources.getDimensionPixelSize(R.dimen.bvp_subtitle_size)
-            mSubViewTextColor = ContextCompat.getColor(context, R.color.bvp_subtitle_color)
+//            mSubViewTextSize = resources.getDimensionPixelSize(R.dimen.bvp_subtitle_size)
+//            mSubViewTextColor = ContextCompat.getColor(context, R.color.bvp_subtitle_color)
         }
 
         if (mPlayDrawable == null)
@@ -383,7 +383,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
     }
 
     override fun setCaptionLoadListener(listener: CaptionsView.CaptionsViewLoadListener?) {
-        mSubView.setCaptionsViewLoadListener(listener)
+//        mSubView.setCaptionsViewLoadListener(listener)
     }
 
     override fun setProgressCallback(callback: VideoProgressCallback) {
@@ -511,13 +511,13 @@ class BetterVideoPlayer @JvmOverloads constructor(
         mControlsFrame.animate().alpha(1f).translationY(0f).setListener(null)
                 .setInterpolator(DecelerateInterpolator()).start()
 
-        val subViewParent = mSubView.parent as View
-        subViewParent.animate().cancel()
-        subViewParent.translationY = mControlsFrame.height.toFloat()
-        subViewParent.animate()
-                .translationY(0f)
-                .setInterpolator(DecelerateInterpolator())
-                .start()
+//        val subViewParent = mSubView.parent as View
+//        subViewParent.animate().cancel()
+//        subViewParent.translationY = mControlsFrame.height.toFloat()
+//        subViewParent.animate()
+//                .translationY(0f)
+//                .setInterpolator(DecelerateInterpolator())
+//                .start()
 
         if (mBottomProgressBarVisibility) {
             hideBottomProgress()
@@ -554,16 +554,16 @@ class BetterVideoPlayer @JvmOverloads constructor(
                     }).start()
         }
 
-        val subViewParent = mSubView.parent as View
-        subViewParent.animate().cancel()
-        subViewParent.animate()
-                .translationY(mControlsFrame.height.toFloat())
-                .setInterpolator(DecelerateInterpolator())
-                .setListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        subViewParent.translationY = 0f
-                    }
-                }).start()
+//        val subViewParent = mSubView.parent as View
+//        subViewParent.animate().cancel()
+//        subViewParent.animate()
+//                .translationY(mControlsFrame.height.toFloat())
+//                .setInterpolator(DecelerateInterpolator())
+//                .setListener(object : AnimatorListenerAdapter() {
+//                    override fun onAnimationEnd(animation: Animator) {
+//                        subViewParent.translationY = 0f
+//                    }
+//                }).start()
 
         if (mBottomProgressBarVisibility) {
             showBottomProgress()
@@ -736,11 +736,11 @@ class BetterVideoPlayer @JvmOverloads constructor(
     }
 
     override fun setCaptions(source: Uri?, subMime: CaptionsView.SubMime) {
-        mSubView.setCaptionsSource(source, subMime)
+//        mSubView.setCaptionsSource(source, subMime)
     }
 
     override fun setCaptions(@RawRes resId: Int, subMime: CaptionsView.SubMime) {
-        mSubView.setCaptionsSource(resId, subMime)
+//        mSubView.setCaptionsSource(resId, subMime)
     }
 
     override fun removeCaptions() {
@@ -941,20 +941,20 @@ class BetterVideoPlayer @JvmOverloads constructor(
         mToolbarFrame.visibility = if (mShowToolbar) View.VISIBLE else View.GONE
         addView(mToolbarFrame)
 
-        // Inflate subtitles
-        val mSubtitlesFrame = li.inflate(R.layout.bvp_include_subtitle, this, false)
-        val mSubtitlesLp = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT)
-        mSubtitlesLp.addRule(RelativeLayout.ABOVE, R.id.bvp_include_relativelayout)
-        mSubtitlesLp.alignWithParent = true
-
-        mSubView = mSubtitlesFrame.findViewById(R.id.subs_box)
-        mPlayer?.let{ mSubView.setPlayer(it) }
-
-        mSubView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubViewTextSize.toFloat())
-        mSubView.setTextColor(mSubViewTextColor)
-
-        addView(mSubtitlesFrame, mSubtitlesLp)
+//        // Inflate subtitles
+//        val mSubtitlesFrame = li.inflate(R.layout.bvp_include_subtitle, this, false)
+//        val mSubtitlesLp = RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+//                ViewGroup.LayoutParams.WRAP_CONTENT)
+//        mSubtitlesLp.addRule(RelativeLayout.ABOVE, R.id.bvp_include_relativelayout)
+//        mSubtitlesLp.alignWithParent = true
+//
+//        mSubView = mSubtitlesFrame.findViewById(R.id.subs_box)
+//        mPlayer?.let{ mSubView.setPlayer(it) }
+//
+//        mSubView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mSubViewTextSize.toFloat())
+//        mSubView.setTextColor(mSubViewTextColor)
+//
+//        addView(mSubtitlesFrame, mSubtitlesLp)
 
         // Retrieve controls
         mSeeker = mControlsFrame.findViewById(R.id.seeker)
