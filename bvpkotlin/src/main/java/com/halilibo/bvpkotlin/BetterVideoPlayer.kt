@@ -732,6 +732,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
         mHandler?.removeCallbacks(mUpdateCounters)
         mHandler = null
 
+        mCallback?.onReleased(this)
         log("Released player and Handler")
     }
 
@@ -788,10 +789,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
         setControlsEnabled(true)
         mIsPrepared = true
 
-        if (mCallback != null) {
-            mCallback?.onPrepared(this)
-        }
-
+        mCallback?.onPrepared(this)
         mLabelPosition.text = Util.getDurationString(0, false)
         mLabelDuration.text = Util.getDurationString(mediaPlayer.duration.toLong(), false)
         mSeeker.progress = 0

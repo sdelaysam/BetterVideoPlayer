@@ -31,6 +31,12 @@ interface VideoCallback {
     fun onPrepared(player: BetterVideoPlayer)
 
     /**
+     * Called when Android MediaPlayer is released
+     * @param player
+     */
+    fun onReleased(player: BetterVideoPlayer)
+
+    /**
      * Called whenever Android MediaPlayer fires a BufferUpdate.
      * @param percent
      */
