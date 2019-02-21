@@ -270,25 +270,7 @@ class BetterVideoPlayer @JvmOverloads constructor(
                 return
 
             mPlayer?.let { player ->
-                var pos = player.currentPosition.toLong()
-                val dur = player.duration.toLong()
-                if (pos > dur) pos = dur
-                mLabelPosition.text = Util.getDurationString(pos, false)
-                if (mShowTotalDuration) {
-                    mLabelDuration.text = Util.getDurationString(dur, false)
-                } else {
-                    mLabelDuration.text = Util.getDurationString(dur - pos, true)
-                }
-                val position = pos.toInt()
-                val duration = dur.toInt()
-
-                mSeeker.progress = position
-                mSeeker.max = duration
-
-                mBottomProgressBar.progress = position
-                mBottomProgressBar.max = duration
-
-                mProgressCallback?.onProgressUpdate(position, duration)
+                redrawPosition(player)
                 mHandler?.postDelayed(this, UPDATE_INTERVAL.toLong())
             }
         }
@@ -806,9 +788,16 @@ class BetterVideoPlayer @JvmOverloads constructor(
                 mInitialPosition = -1
             }
         } else {
-            // Hack to show first frame, is there another way?
-            mPlayer?.start()
-            mPlayer?.pause()
+            mPlayer?.let { player ->
+                // Hack to show first frame, is there another way?
+                player.start()
+                player.pause()
+                if (mInitialPosition > 0) {
+                    seekTo(mInitialPosition)
+                    redrawPosition(player)
+                    mInitialPosition = -1
+                }
+            }
         }
     }
 
@@ -1028,6 +1017,28 @@ class BetterVideoPlayer @JvmOverloads constructor(
 
         mHandler?.removeCallbacks(mUpdateCounters)
         mHandler = null
+    }
+
+    private fun redrawPosition(player: MediaPlayer) {
+        var pos = player.currentPosition.toLong()
+        val dur = player.duration.toLong()
+        if (pos > dur) pos = dur
+        mLabelPosition.text = Util.getDurationString(pos, false)
+        if (mShowTotalDuration) {
+            mLabelDuration.text = Util.getDurationString(dur, false)
+        } else {
+            mLabelDuration.text = Util.getDurationString(dur - pos, true)
+        }
+        val position = pos.toInt()
+        val duration = dur.toInt()
+
+        mSeeker.progress = position
+        mSeeker.max = duration
+
+        mBottomProgressBar.progress = position
+        mBottomProgressBar.max = duration
+
+        mProgressCallback?.onProgressUpdate(position, duration)
     }
 
     private fun adjustAspectRatio(viewWidth: Int, viewHeight: Int, videoWidth: Int, videoHeight: Int) {
